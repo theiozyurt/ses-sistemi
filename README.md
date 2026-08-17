@@ -3,6 +3,32 @@
 Tkinter tabanlı beyaz gürültü oynatıcı. Süre, ses çıkış cihazı,
 normal ses seviyesi ve dB tabanlı yazılım yükseltici içerir.
 
+## Windows 8 Kullanımı
+
+Son kullanici Windows 8 / 8.1 tarafinda sadece tek dosyayi acar:
+
+```text
+SesSistemi.exe
+```
+
+Python veya ek paket kurulumu gerekmez. `.exe` dosyasi build makinesinde
+uretilir ve `dist\SesSistemi.exe` olarak cikar.
+
+## Windows Tek Dosya EXE Uretme
+
+Build almak icin Windows 8 / 8.1 uyumlu bir makinede Python 3.8.x 64-bit
+kurulu olmalidir. Ardindan:
+
+```bat
+build_windows.bat
+```
+
+Script sanal ortam olusturur, bagimliliklari kurar ve tek dosya exe uretir:
+
+```text
+dist\SesSistemi.exe
+```
+
 ## Kurulum
 
 Windows 8 / 8.1 hedefi icin Python 3.8.x 64-bit kullanin. Daha yeni
@@ -52,6 +78,10 @@ olarak hesaplar.
 Yazılım yükseltici +24 dB ile sınırlıdır ve çıkışta soft limiter kullanır.
 Bu sınır hoparlörün fiziksel kapasitesini artırmaz; hoparlör veya amfi
 yetersizse daha yüksek dB için donanım gerekir.
+
+Uygulamada dB artisi "Ses Yükseltici" alanindaki slider ile ayarlanir.
+"Hesaplanan Yükseltmeyi Uygula" butonu, yukaridaki olcumlardan gereken
+dB artis miktarini otomatik uygular.
 
 ## Güvenlik
 

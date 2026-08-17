@@ -1,4 +1,5 @@
 .venv/
+.venv-win8/
 .idea/
 __pycache__/
 *.py[cod]

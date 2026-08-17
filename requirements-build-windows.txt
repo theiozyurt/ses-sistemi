@@ -1,0 +1,3 @@
+# Bu dosya yalnizca Windows uzerinde tek dosya .exe uretmek icindir.
+# Son kullanici bu paketleri kurmaz; PyInstaller bagimliliklari .exe icine alir.
+pyinstaller==5.13.2
