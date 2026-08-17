@@ -1,4 +1,3 @@
-import threading
 import time
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -9,11 +8,16 @@ import sounddevice as sd
 
 SAMPLE_RATE = 44100
 CHANNELS = 2
+MAX_GAIN_DB = 24.0
+DEFAULT_TARGET_DB = 80.0
+DEFAULT_NEAR_DB = 75.0
+DEFAULT_FAR_DB = 60.0
 
 
 class WhiteNoisePlayer:
     def __init__(self):
         self.volume = 1.0
+        self.gain_db = 0.0
         self.stream = None
         self.buffer = self._create_noise_buffer()
 
@@ -27,6 +31,12 @@ class WhiteNoisePlayer:
 
     def set_volume(self, volume):
         self.volume = max(0.0, min(1.0, float(volume)))
+
+    def set_gain_db(self, gain_db):
+        self.gain_db = max(0.0, min(MAX_GAIN_DB, float(gain_db)))
+
+    def _output_gain(self):
+        return self.volume * (10 ** (self.gain_db / 20.0))
 
     def _create_noise_buffer(self):
         """
@@ -82,13 +92,15 @@ class WhiteNoisePlayer:
             available = buffer_length - self._buffer_position
             count = min(remaining, available)
 
+            chunk = self.buffer[
+                self._buffer_position:self._buffer_position + count
+            ] * self._output_gain()
+
+            # Soft limiter: yüksek gain'de sert clipping yerine sinyali
+            # 1.0 sınırına yumuşak yaklaştırır.
             outdata[
                 output_position:output_position + count
-            ] = (
-                    self.buffer[
-                        self._buffer_position:self._buffer_position + count
-                    ] * self.volume
-            )
+            ] = np.tanh(chunk).astype(np.float32)
 
             self._buffer_position += count
             output_position += count
@@ -163,6 +175,8 @@ class SoundTestApp:
 
         self.status_var = tk.StringVar(value="HAZIR")
         self.remaining_var = tk.StringVar(value="00:00:00")
+        self.calibration_var = tk.StringVar()
+        self.required_gain_db = 0.0
 
         self._build_ui()
         self._load_devices()
@@ -180,14 +194,65 @@ class SoundTestApp:
             volume / 100.0
         )
 
+    def _gain_changed(self, value):
+        gain_db = float(value)
+
+        self.gain_label.config(
+            text=f"+{gain_db:.1f} dB"
+        )
+
+        self.player.set_gain_db(gain_db)
+        self._update_calibration()
+
+    def _update_calibration(self):
+        try:
+            near_db = float(self.near_db_var.get())
+            far_db = float(self.far_db_var.get())
+            target_db = float(self.target_db_var.get())
+        except ValueError:
+            self.calibration_var.set("Kalibrasyon için sayısal dB girin.")
+            return
+
+        distance_loss = near_db - far_db
+        required_near_db = target_db + distance_loss
+        required_gain_db = required_near_db - near_db
+        selected_gain_db = self.player.gain_db
+        estimated_far_db = far_db + selected_gain_db
+        self.required_gain_db = max(0.0, required_gain_db)
+
+        self.calibration_var.set(
+            "Hedef yakın seviye: "
+            f"{required_near_db:.1f} dB | "
+            "Gereken artış: "
+            f"+{self.required_gain_db:.1f} dB | "
+            "Seçili tahmini uzak seviye: "
+            f"{estimated_far_db:.1f} dB"
+        )
+
+    def _apply_calibrated_gain(self):
+        gain_db = min(MAX_GAIN_DB, self.required_gain_db)
+
+        self.gain_var.set(gain_db)
+        self._gain_changed(gain_db)
+
+        if self.required_gain_db > MAX_GAIN_DB:
+            messagebox.showwarning(
+                "Yükseltici Sınırı",
+                (
+                    f"Hesaplanan ihtiyaç +{self.required_gain_db:.1f} dB. "
+                    f"Yazılım sınırı +{MAX_GAIN_DB:.1f} dB olarak uygulandı. "
+                    "Daha fazlası için daha güçlü hoparlör/amfi gerekebilir."
+                ),
+            )
+
     # ---------------------------------------------------------
     # UI
     # ---------------------------------------------------------
 
     def _build_ui(self):
-        self.root.geometry("500x500")
-        self.root.minsize(500, 500)
-        self.root.maxsize(500, 500)
+        self.root.geometry("560x680")
+        self.root.minsize(560, 680)
+        self.root.maxsize(560, 680)
 
         main = ttk.Frame(self.root, padding=18)
         main.pack(fill="both", expand=True)
@@ -289,6 +354,130 @@ class SoundTestApp:
         )
 
         self.volume_label.pack(side="right")
+
+        # SES YÜKSELTİCİ
+        gain_frame = ttk.LabelFrame(
+            main,
+            text="Ses Yükseltici",
+            padding=10,
+        )
+        gain_frame.pack(fill="x", pady=4)
+
+        gain_row = ttk.Frame(gain_frame)
+        gain_row.pack(fill="x")
+
+        self.gain_var = tk.DoubleVar(value=0)
+
+        self.gain_slider = ttk.Scale(
+            gain_row,
+            from_=0,
+            to=MAX_GAIN_DB,
+            orient="horizontal",
+            variable=self.gain_var,
+            command=self._gain_changed,
+        )
+
+        self.gain_slider.pack(
+            side="left",
+            fill="x",
+            expand=True,
+            padx=(5, 12),
+        )
+
+        self.gain_label = ttk.Label(
+            gain_row,
+            text="+0.0 dB",
+            width=8,
+        )
+
+        self.gain_label.pack(side="right")
+
+        ttk.Label(
+            gain_frame,
+            text=(
+                "Yüksek dB uzun kullanımda risklidir. "
+                "Ölçüm yaparak kademeli artırın."
+            ),
+            foreground="#8a4b00",
+        ).pack(fill="x", padx=5, pady=(7, 0))
+
+        # KALİBRASYON
+        calibration_frame = ttk.LabelFrame(
+            main,
+            text="dB Kalibrasyonu",
+            padding=10,
+        )
+        calibration_frame.pack(fill="x", pady=4)
+
+        calibration_grid = ttk.Frame(calibration_frame)
+        calibration_grid.pack(fill="x")
+
+        self.near_db_var = tk.StringVar(value=f"{DEFAULT_NEAR_DB:.0f}")
+        self.far_db_var = tk.StringVar(value=f"{DEFAULT_FAR_DB:.0f}")
+        self.target_db_var = tk.StringVar(value=f"{DEFAULT_TARGET_DB:.0f}")
+
+        ttk.Label(
+            calibration_grid,
+            text="Hoparlör yanı",
+        ).grid(row=0, column=0, sticky="w", padx=5)
+
+        ttk.Label(
+            calibration_grid,
+            text="Uzak nokta",
+        ).grid(row=0, column=1, sticky="w", padx=5)
+
+        ttk.Label(
+            calibration_grid,
+            text="Hedef uzak",
+        ).grid(row=0, column=2, sticky="w", padx=5)
+
+        near_entry = ttk.Entry(
+            calibration_grid,
+            textvariable=self.near_db_var,
+            width=10,
+        )
+        near_entry.grid(row=1, column=0, sticky="ew", padx=5)
+
+        far_entry = ttk.Entry(
+            calibration_grid,
+            textvariable=self.far_db_var,
+            width=10,
+        )
+        far_entry.grid(row=1, column=1, sticky="ew", padx=5)
+
+        target_entry = ttk.Entry(
+            calibration_grid,
+            textvariable=self.target_db_var,
+            width=10,
+        )
+        target_entry.grid(row=1, column=2, sticky="ew", padx=5)
+
+        for column in range(3):
+            calibration_grid.columnconfigure(column, weight=1)
+
+        for variable in (
+            self.near_db_var,
+            self.far_db_var,
+            self.target_db_var,
+        ):
+            variable.trace_add(
+                "write",
+                lambda *_: self._update_calibration(),
+            )
+
+        ttk.Label(
+            calibration_frame,
+            textvariable=self.calibration_var,
+            wraplength=510,
+        ).pack(fill="x", padx=5, pady=(8, 0))
+
+        ttk.Button(
+            calibration_frame,
+            text="Hesaplanan Yükseltmeyi Uygula",
+            command=self._apply_calibrated_gain,
+        ).pack(fill="x", padx=5, pady=(8, 0))
+
+        self._update_calibration()
 
         # SES ÇIKIŞI
         output_frame = ttk.LabelFrame(
@@ -404,13 +593,16 @@ class SoundTestApp:
             expand=True,
             padx=(4, 0),
             ipady=4,
-        )    # ---------------------------------------------------------
+        )
+
+    # ---------------------------------------------------------
     # Devices
     # ---------------------------------------------------------
 
     def _load_devices(self):
         try:
             current_device = self.device_var.get()
+            self.devices = []
 
             devices = sd.query_devices()
 
@@ -446,6 +638,7 @@ class SoundTestApp:
                 "Ses Cihazı Hatası",
                 str(exc),
             )
+
     # ---------------------------------------------------------
     # Duration
     # ---------------------------------------------------------
@@ -590,6 +783,7 @@ class SoundTestApp:
         self.stop_button.config(
             state="disabled"
         )
+
     # ---------------------------------------------------------
     # Timer
     # ---------------------------------------------------------
