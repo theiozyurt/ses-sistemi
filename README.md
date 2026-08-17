@@ -5,12 +5,33 @@ normal ses seviyesi ve dB tabanlı yazılım yükseltici içerir.
 
 ## Kurulum
 
+Windows 8 / 8.1 hedefi icin Python 3.8.x 64-bit kullanin. Daha yeni
+Python ve NumPy surumleri eski Windows surumlerinde calismayabilir.
+
+Windows:
+
+```bat
+py -3.8 -m venv .venv
+.venv\Scripts\python -m pip install --upgrade pip
+.venv\Scripts\pip install -r requirements.txt
+```
+
+macOS / Linux:
+
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 ```
 
 ## Çalıştırma
+
+Windows:
+
+```bat
+.venv\Scripts\python main.py
+```
+
+macOS / Linux:
 
 ```bash
 .venv/bin/python main.py

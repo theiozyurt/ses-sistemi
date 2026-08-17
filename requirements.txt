@@ -1,2 +1,7 @@
-numpy==2.5.2
-sounddevice==0.5.5
+# Windows 8 / 8.1 hedefi icin Python 3.8.x ile kullanin.
+# Daha yeni NumPy surumleri eski Windows/Python kombinasyonlarinda
+# wheel bulamayabilir veya hic desteklenmeyebilir.
+numpy==1.24.4
+sounddevice==0.4.6
+cffi==1.15.1
+pycparser==2.21
