@@ -13,20 +13,80 @@ reverse-engineering the code.
 - **Version:** 1.0.0
 - **Status:** feature-complete; in use in an ethics-approved animal-behaviour
   protocol (see *Research context*)
-- **Platforms:** Windows 8/8.1 and later (64-bit), macOS (Apple Silicon & Intel)
+- **Platforms:** Windows 8/8.1 and later (64-bit), macOS on Apple Silicon
+  (Intel Macs: build from source)
 - **End users need no Python installation** — a single-file executable is produced
   by the included build scripts.
 
 ---
 
+## Download
+
+**You do not need this repository to use the application.** Download one file,
+double-click it, done — no Python, no installer, no configuration.
+
+| Platform | Download |
+|---|---|
+| **Windows** — 8 / 8.1 / 10 / 11, 64-bit | **[⬇ SesSistemi-windows-x64.exe](https://github.com/theiozyurt/ses-sistemi/releases/latest/download/SesSistemi-windows-x64.exe)** |
+| **macOS** — Apple Silicon (M1 or later) | **[⬇ SesSistemi-macos-arm64](https://github.com/theiozyurt/ses-sistemi/releases/latest/download/SesSistemi-macos-arm64)** |
+
+Both links always point at the newest release (about 20–25 MB each). Older
+versions are on the [Releases page](https://github.com/theiozyurt/ses-sistemi/releases).
+
+### System requirements
+
+| | Windows | macOS |
+|---|---|---|
+| Operating system | Windows 8 / 8.1 or later, **64-bit** | macOS 13 (Ventura) or later |
+| Processor | x86-64 | **Apple Silicon** (M1 or later) |
+| Memory | ~200 MB free | ~200 MB free |
+| Disk | ~30 MB | ~30 MB |
+| Audio | Any output device — built-in speakers, USB interface, HDMI | Same |
+| Python | **Not required** | **Not required** |
+| Internet | **Not required**, at install or at run time | Same |
+
+The macOS requirements are inherited from the Python used to produce the build,
+not from the application itself. If your lab has an Intel Mac or an older macOS,
+[build from source](#building-a-single-file-executable) on that machine — the
+code itself has no such limit.
+
+### First launch
+
+Both files are **unsigned**, so each operating system warns once. This is
+expected for research software that has not been through a paid signing
+programme, and the warning does not reappear afterwards.
+
+**Windows** — a blue "Windows protected your PC" panel appears:
+*More info* → *Run anyway*.
+
+**macOS** — right-click the file in Finder and choose *Open* (double-clicking
+will not offer the option), or clear the quarantine flag from Terminal:
+
+```bash
+xattr -d com.apple.quarantine SesSistemi-macos-arm64
+chmod +x SesSistemi-macos-arm64
+```
+
+The application is portable: it writes nothing outside its own window, installs
+no services, and touches no registry keys. To remove it, delete the file.
+
+Go to [Usage guide](#usage-guide) to set up your first session, or to
+[Calibrate against a sound-level meter](#3-calibrate-against-a-sound-level-meter)
+if the level matters — which, in an experiment, it does.
+
+---
+
 ## Table of contents
 
+- [**Download**](#download) — start here if you just want to run it
+  - [System requirements](#system-requirements)
+  - [First launch](#first-launch)
 - [Research context](#research-context)
   - [The stressor this application delivers](#the-stressor-this-application-delivers)
   - [What this buys the protocol](#what-this-buys-the-protocol)
 - [What the application does](#what-the-application-does)
 - [Repository layout](#repository-layout)
-- [Requirements](#requirements)
+- [Development requirements](#development-requirements)
 - [Installation (from source)](#installation-from-source)
 - [Running](#running)
 - [Usage guide](#usage-guide)
@@ -39,6 +99,7 @@ reverse-engineering the code.
   - [Worked example: the 80 dB white-noise block](#worked-example-the-80-db-white-noise-block)
 - [How the audio is produced](#how-the-audio-is-produced)
 - [Building a single-file executable](#building-a-single-file-executable)
+  - [Publishing a release](#publishing-a-release)
 - [Limitations and known constraints](#limitations-and-known-constraints)
 - [Safety and welfare notes](#safety-and-welfare-notes)
 - [Citation](#citation)
@@ -174,7 +235,7 @@ translation keys — nothing else in the code needs to change.
 
 ---
 
-## Requirements
+## Development requirements
 
 | | Version | Note |
 |---|---|---|
@@ -184,7 +245,9 @@ translation keys — nothing else in the code needs to change.
 | cffi / pycparser | 1.15.1 / 2.21 | `sounddevice` dependencies |
 | Tkinter | bundled with Python | GUI |
 
-The pins in `requirements.txt` exist for **binary compatibility with Windows 8**.
+These apply only if you run or build from source; the downloads above need none
+of them. The pins in `requirements.txt` exist for **binary compatibility with
+Windows 8**.
 If that target is irrelevant to your setup, newer versions will normally work.
 
 ---
@@ -221,15 +284,9 @@ python3 -m venv .venv
 .venv/bin/python main.py              # macOS / Linux
 ```
 
-**As a packaged executable** (what the person running the experiment uses)
-
-- Windows: double-click `SesSistemi.exe`. No Python, no dependencies.
-- macOS: run `SesSistemi`. The binary is unsigned, so Gatekeeper may warn on
-  first launch — right-click → *Open* in Finder, or clear the quarantine flag:
-
-  ```bash
-  xattr -d com.apple.quarantine SesSistemi
-  ```
+**As a packaged executable** — what the person running the experiment actually
+uses. Nothing on this page applies to them: they download one file from
+[Download](#download) and double-click it.
 
 ---
 
@@ -463,8 +520,59 @@ yourself:
 .venv/bin/pip install numpy sounddevice cffi
 ```
 
-The resulting binary is unsigned; distribute it with the Gatekeeper instructions
-from [Running](#running).
+The resulting binary is unsigned and Apple Silicon only; distribute it with the
+Gatekeeper instructions from [First launch](#first-launch).
+
+---
+
+### Publishing a release
+
+The download links at the top of this file are **fixed URLs** of the form
+`releases/latest/download/<asset name>`, so they never need updating — but they
+only resolve if each release carries assets with exactly these names:
+
+| Platform | Asset name |
+|---|---|
+| Windows | `SesSistemi-windows-x64.exe` |
+| macOS (Apple Silicon) | `SesSistemi-macos-arm64` |
+
+Renaming an asset silently breaks the links in this README. Build on each
+platform, rename, then publish:
+
+```bash
+# macOS machine
+./build_mac.sh
+mv dist/SesSistemi dist/SesSistemi-macos-arm64
+
+# Windows machine
+#   build_windows.bat   ->   rename dist\SesSistemi.exe to SesSistemi-windows-x64.exe
+```
+
+Before writing a macOS minimum version into the requirements table, read it off
+the binary you actually produced rather than trusting this file:
+
+```bash
+otool -l dist/SesSistemi-macos-arm64 | grep -A3 LC_BUILD_VERSION
+```
+
+Then create the release, attaching both files:
+
+```bash
+gh release create v1.0.0 \
+  dist/SesSistemi-macos-arm64 \
+  dist/SesSistemi-windows-x64.exe \
+  --title "White Noise System 1.0.0" \
+  --notes "See CHANGELOG.md for the full list of changes."
+```
+
+Two things to check every time:
+
+1. **Rebuild both binaries from the tagged commit.** An executable built before
+   the last code change is the easiest way to ship an application that behaves
+   differently from its own documentation.
+2. **The repository must be public** for anyone outside the account to follow the
+   download links. While it is private, the links return 404 even for people who
+   can see this README.
 
 ---
 
@@ -477,6 +585,11 @@ from [Running](#running).
   the physical capability of the amplifier and speaker.
 - **No logging.** The program does not write a run log; exposure records are kept
   by the experimenter. (This is the most obvious next feature.)
+- **The published macOS binary is Apple Silicon only.** Intel Macs and older
+  macOS versions are not covered by the download and need a build from source on
+  such a machine.
+- **Neither binary is code-signed or notarised,** so both operating systems warn
+  on first launch.
 - **Sleep inhibition is Windows/macOS only** and is deliberately a no-op on Linux.
 - **Screen sleep is not blocked** on Windows — only system sleep. The display may
   turn off; playback continues.

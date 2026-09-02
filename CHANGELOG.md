@@ -4,6 +4,25 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- README: a Download section with fixed `releases/latest/download/` links for
+  Windows and macOS, per-platform system requirements, and first-launch
+  instructions for the unsigned binaries — so an experimenter never has to touch
+  the repository.
+- README: a release-publishing procedure that fixes the two asset names the
+  download links depend on, and a reminder to rebuild both binaries from the
+  tagged commit.
+
+### Changed
+
+- "Requirements" renamed to "Development requirements" to separate it from the
+  end-user system requirements.
+- Platform claim corrected: the published macOS binary is Apple Silicon only;
+  Intel Macs need a build from source.
+
 ## [1.0.0] - 2026-09-02
 
 First tagged release. The application is feature-complete and delivers the 80 dB
