@@ -33,6 +33,11 @@ double-click it, done — no Python, no installer, no configuration.
 Both links always point at the newest release (about 20–25 MB each). Older
 versions are on the [Releases page](https://github.com/theiozyurt/ses-sistemi/releases).
 
+> **The v1.0.0 binaries have not been published yet.** The links above start
+> working the moment the first release carries them; until then, run the
+> application [from source](#installation-from-source). Remove this note when
+> the release is up.
+
 ### System requirements
 
 | | Windows | macOS |
