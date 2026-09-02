@@ -1,0 +1,61 @@
+cff-version: 1.2.0
+title: White Noise System (ses-sistemi)
+message: >-
+  If you use this software in work that you publish, please cite it
+  using the metadata below.
+type: software
+authors:
+  - given-names: İsmail
+    family-names: Özyurt
+    email: ismailozyurt96@gmail.com
+    # orcid: 'https://orcid.org/0000-0000-0000-0000'
+repository-code: 'https://github.com/theiozyurt/ses-sistemi'
+abstract: >-
+  A calibrated, schedule-driven white-noise generator for laboratory
+  use. Delivers continuous synthetic white noise through a selected
+  audio output for a timed program, including repeating work/rest
+  cycles, with meter-anchored sound pressure level estimates and
+  sleep inhibition for unattended multi-hour runs. Built as the
+  acoustic stressor delivery module of a chronic unpredictable mild
+  stress (CUMS) protocol in rats (Kütahya Health Sciences University
+  Animal Experiments Local Ethics Committee, decision no. 2026.07.02).
+keywords:
+  - white noise
+  - acoustic stressor
+  - chronic unpredictable mild stress
+  - CUMS
+  - animal behaviour
+  - laboratory automation
+  - psychoacoustics
+license: MIT
+version: 1.0.0
+date-released: '2026-09-02'
+references:
+  - type: article
+    title: >-
+      Moderate 3D orbital shaking mitigates maternal separation-induced
+      neurodevelopmental impairments in rats
+    authors:
+      - given-names: Ulya
+        family-names: Keskin
+      - given-names: Melkan Kağan
+        family-names: Kara
+      - given-names: Onur
+        family-names: Özel
+      - given-names: İbrahim Çağrı
+        family-names: Kuraşı
+      - given-names: Serel
+        family-names: Akyol
+      - given-names: Cansu
+        family-names: Özbayer
+      - given-names: Neziha Senem
+        family-names: Arı
+      - given-names: Yasemin
+        family-names: Tunç
+      - given-names: Ercan
+        family-names: Bayır
+    journal: Behavioural Processes
+    volume: 239
+    start: 105394
+    year: 2026
+    doi: 10.1016/j.beproc.2026.105394

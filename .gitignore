@@ -1,9 +1,25 @@
+# --- Virtual environments ---
 .venv/
 .venv-win8/
+
+# --- IDE / OS ---
 .idea/
+.vscode/
+.DS_Store
+
+# --- Python ---
 __pycache__/
 *.py[cod]
-.DS_Store
-dist/
-build/
 *.egg-info/
+
+# --- Build output ---
+build/
+dist/
+
+# Redundant archive of vendor/mac_wheels/; the unpacked wheels are tracked
+# because build_mac.sh installs PyInstaller from them without network access.
+vendor/mac_wheels_offline.zip
+
+# --- Local working files (not part of the published project) ---
+_to_delete/
+ses_sistemi_durum_raporu.md
