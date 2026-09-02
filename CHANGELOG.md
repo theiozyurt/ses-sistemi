@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README: a release-publishing procedure that fixes the two asset names the
   download links depend on, and a reminder to rebuild both binaries from the
   tagged commit.
+- Screenshots of the running application under `docs/screenshots/`: the main
+  window as the reference view, and the Turkish and dark-theme variants
+  illustrating the runtime language and theme switching.
 
 ### Changed
 

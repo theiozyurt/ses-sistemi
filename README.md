@@ -18,6 +18,15 @@ reverse-engineering the code.
 - **End users need no Python installation** — a single-file executable is produced
   by the included build scripts.
 
+![The White Noise System main window: work duration and interval-mode
+scheduling on the left, volume, dB control with meter-anchored estimates and
+audio output selection on the right, status and transport controls along the
+bottom.](docs/screenshots/main-light.png)
+
+*The whole application is one window. Everything that shapes the stimulus —
+duration, cycle, level, calibration reference, output device — is visible at
+once and can be transcribed straight into a methods section.*
+
 ---
 
 ## Download
@@ -378,7 +387,16 @@ during a multi-hour run.
 
 The dropdown at the top right switches between **Türkçe** and **English**; the
 adjacent button toggles **light / dark** theme. Both apply instantly to every
-label, button, entry, dropdown and status field.
+label, button, entry, dropdown and status field — no restart, and nothing is
+lost from the form you have already filled in.
+
+| Türkçe | Dark theme |
+|---|---|
+| ![The same window in Turkish, showing that every label, button and status text is translated.](docs/screenshots/main-turkish.png) | ![The same window in the dark theme, with contrast preserved across labels, entries, dropdowns and the warning text.](docs/screenshots/main-dark.png) |
+
+Adding a language means adding one key to the `TRANSLATIONS` dictionary in
+`main.py`; adding a theme means one entry in `THEMES`. Neither touches the rest
+of the code.
 
 ---
 
