@@ -120,12 +120,7 @@ This tool was written to deliver the white-noise stressor of the following study
 > Principal investigator: Dr. Ulya Keskin, Department of Medical Pharmacology,
 > Faculty of Medicine, Kütahya Health Sciences University (KSBÜ), Türkiye.
 > Approved by the KSBÜ Animal Experiments Local Ethics Committee (HADYEK),
-> decision no. 2026.07.02 of 23 July 2026; supported by the university's BAP
-> scheme.
-
-The design is a 2 × 2 factorial: 40 male Sprague-Dawley rats in four groups of
-ten — control, CUMS, 3D-OS, and CUMS + 3D-OS. Days 1–7 are acclimatisation,
-days 8–28 the intervention, day 29 sample collection.
+> decision no. 2026.07.02 of 23 July 2026.
 
 ### The stressor this application delivers
 
@@ -172,10 +167,6 @@ assigns.
 
 Nothing in the code is specific to this study. Any protocol that needs *"X dB of
 white noise for Y minutes, N times, in this room"* can use it as-is.
-
-> **Related tooling.** Open-field test recordings in the same study are scored by
-> separate in-house image-processing software. That tool is not part of this
-> repository.
 
 ## What the application does
 
@@ -657,14 +648,14 @@ the application implements:
 
 - **Dr. Ulya Keskin** — principal investigator; Department of Medical
   Pharmacology, Faculty of Medicine, Kütahya Health Sciences University
+- **Dr. Melkan Kağan Kara** — project lead
 - **Dr. Serel Akyol** — co-investigator
-- **Dr. Melkan Kağan Kara** — co-investigator
 - **Assoc. Prof. Dr. Ayşe Koçak Sezgin** — co-investigator; Department of Medical
   Biochemistry, Faculty of Medicine, Kütahya Health Sciences University
+- **İsmail Özyurt** — research software (this application)
 
 The study is conducted at the KSBÜ Faculty of Medicine Laboratory Animals
-Breeding and Research Unit (DEHYUB) and KUYAM, and is supported by the
-university's Scientific Research Projects (BAP) unit.
+Breeding and Research Unit (DEHYUB) and KUYAM.
 
 The 80 dB / 3 × 1 h stressor specification, the requirement to verify levels
 with a sound-level meter, and the constraint that cross-day scheduling stays

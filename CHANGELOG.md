@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Research context reduced at the request of the study team: the group/animal
+  design and the funding line are removed while the study remains unpublished.
+- Acknowledgements list the project lead and the software contributor.
 - "Requirements" renamed to "Development requirements" to separate it from the
   end-user system requirements.
 - Platform claim corrected: the published macOS binary is Apple Silicon only;
